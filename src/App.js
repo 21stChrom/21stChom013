@@ -1,11 +1,40 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import localforage from 'localforage';
+import { CategoryScale, Chart } from "chart.js";
+Chart.register(CategoryScale);
+import { Chart, LinearScale } from 'chart.js';
+Chart.register(LinearScale);
+import { Chart, PointElement } from 'chart.js';
+Chart.register(PointElement);
+import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale } from 'chart.js';
+
+Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale);
+
+const ctx = document.getElementById('myChart');
+new Chart(ctx, {
+  type: 'line',
+  data: {},
+  options: {}
+});
+
+
 
 function App() {
   const [counter, setCounter] = useState(0);
   const [timer, setTimer] = useState(0);
-  const [chartData, setChartData] = useState({});
+  const [chartData, setChartData] = useState({
+    labels: ['Counter', 'Timer'],
+    datasets: [
+      {
+        label: 'Progress',
+        data: [counter, timer],
+        backgroundColor: 'rgba(75,192,192,0.2)',
+        borderColor: 'rgba(75,192,192,1)',
+        borderWidth: 1,
+      },
+    ],
+  });
   const intervalRef = useRef(null);
 
   useEffect(() => {
@@ -25,7 +54,7 @@ function App() {
     if (!intervalRef.current) {
       intervalRef.current = setInterval(() => {
         setTimer((prevTimer) => prevTimer + 1);
-      }, 1);
+      }, 1000); // Changed from 1 to 1000 for a one-second interval
     }
   };
 
@@ -42,18 +71,15 @@ function App() {
   };
 
   const updateChartData = () => {
-    setChartData({
-      labels: ['Counter', 'Timer'],
+    setChartData((prevChartData) => ({
+      ...prevChartData,
       datasets: [
         {
-          label: 'Progress',
+          ...prevChartData.datasets[0],
           data: [counter, timer],
-          backgroundColor: 'rgba(75,192,192,0.2)',
-          borderColor: 'rgba(75,192,192,1)',
-          borderWidth: 1,
         },
       ],
-    });
+    }));
   };
 
   const saveData = () => localforage.setItem('userData', { counter, timer });
