@@ -9,28 +9,17 @@ function App() {
   const intervalRef = useRef(null);
 
   useEffect(() => {
-    // Load data from local storage on app startup
     loadData();
   }, []);
 
   useEffect(() => {
-    // Update the chart data whenever the counter or timer changes
     updateChartData();
-    // Save data to local storage whenever the counter or timer changes
     saveData();
   }, [counter, timer]);
 
-  const incrementCounter = () => {
-    setCounter(counter + 1);
-  };
-
-  const decrementCounter = () => {
-    setCounter(counter - 1);
-  };
-
-  const resetCounter = () => {
-    setCounter(0);
-  };
+  const incrementCounter = () => setCounter(counter + 1);
+  const decrementCounter = () => setCounter(counter - 1);
+  const resetCounter = () => setCounter(0);
 
   const startTimer = () => {
     if (!intervalRef.current) {
@@ -67,9 +56,7 @@ function App() {
     });
   };
 
-  const saveData = () => {
-    localforage.setItem('userData', { counter, timer });
-  };
+  const saveData = () => localforage.setItem('userData', { counter, timer });
 
   const loadData = async () => {
     const data = await localforage.getItem('userData');
